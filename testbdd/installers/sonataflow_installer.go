@@ -31,11 +31,11 @@ var (
 	// kogitoYamlClusterInstaller installs Kogito operator cluster wide using YAMLs
 	sonataFlowYamlClusterInstaller = installers.YamlClusterWideServiceInstaller{
 		InstallClusterYaml:               installSonataFlowUsingYaml,
-		InstallationNamespace:            KogitoNamespace,
+		InstallationNamespace:            SonataFlowNamespace,
 		WaitForClusterYamlServiceRunning: waitForKogitoOperatorUsingYamlRunning,
 		GetAllClusterYamlCrsInNamespace:  getKogitoCrsInNamespace,
 		UninstallClusterYaml:             uninstallKogitoUsingYaml,
-		ClusterYamlServiceName:           kogitoServiceName,
+		ClusterYamlServiceName:           sonataFlowServiceName,
 		CleanupClusterYamlCrsInNamespace: cleanupKogitoCrsInNamespace,
 	}
 
@@ -59,11 +59,11 @@ var (
 		CleanupClusterWideOlmCrsInNamespace: cleanupKogitoCrsInNamespace,
 	}
 
-	// KogitoNamespace is the kogito namespace for yaml cluster-wide deployment
-	KogitoNamespace   = "kogito-serverless-operator-system"
-	kogitoServiceName = "Kogito serverless operator"
+	// SonataFlowNamespace is the SonataFlow namespace for yaml cluster-wide deployment
+	SonataFlowNamespace   = "sonataflow-operator-system"
+	sonataFlowServiceName = "SonataFlow operator"
 
-	kogitoOperatorSubscriptionName    = "kogito-serverless-operator"
+	kogitoOperatorSubscriptionName    = "sonataflow-operator"
 	kogitoOperatorSubscriptionChannel = "alpha"
 )
 
@@ -117,7 +117,7 @@ func installSonataFlowUsingYaml() error {
 }
 
 func waitForKogitoOperatorUsingYamlRunning() error {
-	return srvframework.WaitForKogitoOperatorRunning(KogitoNamespace)
+	return srvframework.WaitForKogitoOperatorRunning(SonataFlowNamespace)
 }
 
 func uninstallKogitoUsingYaml() error {

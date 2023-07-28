@@ -8,7 +8,7 @@ replace (
 	github.com/kiegroup/kogito-serverless-operator => ../
 	github.com/kiegroup/kogito-serverless-operator/api => ../api
 	github.com/kiegroup/kogito-serverless-operator/container-builder => ../container-builder
-	github.com/kiegroup/kogito-serverless-operator/workflowproj => ./workflowproj
+	github.com/kiegroup/kogito-serverless-operator/workflowproj => ../workflowproj
 	github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring => github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.50.0
 )
 

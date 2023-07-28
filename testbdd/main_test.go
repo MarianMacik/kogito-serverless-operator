@@ -20,8 +20,8 @@ import (
 	"github.com/cucumber/godog"
 	kogitoExecutor "github.com/kiegroup/kogito-operator/test/pkg/executor"
 	kogitoFramework "github.com/kiegroup/kogito-operator/test/pkg/framework"
-	"github.com/kiegroup/kogito-operator/test/pkg/meta"
 	kogitoSteps "github.com/kiegroup/kogito-operator/test/pkg/steps"
+	"github.com/kiegroup/kogito-serverless-operator/testbdd/meta"
 	"github.com/kiegroup/kogito-serverless-operator/testbdd/steps"
 )
 

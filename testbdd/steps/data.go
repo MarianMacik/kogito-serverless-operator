@@ -17,7 +17,10 @@ package steps
 import (
 	"fmt"
 	"github.com/cucumber/godog"
+	"github.com/kiegroup/kogito-operator/test/pkg/framework"
 	"github.com/kiegroup/kogito-operator/test/pkg/steps"
+	"strconv"
+	"time"
 )
 
 // Data contains all data needed by Gherkin steps to run
@@ -29,6 +32,7 @@ type Data struct {
 func (data *Data) RegisterAllSteps(ctx *godog.ScenarioContext) {
 	ctx.Step(`^Asked to print out the name "([^"]*)"$`, data.askedToPrintOutTheName)
 	ctx.Step(`^Print the name "([^"]*)"$`, data.printTheName)
+	ctx.Step(`^Wait (\d+) seconds?$`, data.waitSeconds)
 	registerOperatorSteps(ctx, data)
 	registerPlatformSteps(ctx, data)
 	registerSonataFlowSteps(ctx, data)
@@ -49,5 +53,11 @@ func (data *Data) askedToPrintOutTheName(arg1 string) error {
 
 func (data *Data) printTheName(arg1 string) error {
 	fmt.Printf("Hello The Name %s", arg1)
+	return nil
+}
+
+func (data *Data) waitSeconds(seconds int) error {
+	framework.GetMainLogger().Info("Waiting for " + strconv.Itoa(seconds) + " s")
+	_ = <-time.After(time.Duration(seconds) * time.Second)
 	return nil
 }

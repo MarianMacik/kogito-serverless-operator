@@ -11,14 +11,14 @@ import (
 const (
 	sonataFlowOperatorTimeoutInMin = 5
 
-	sonataFlowOperatorName                  = "kogito-serverless-operator"
+	sonataFlowOperatorName                  = "sonataflow-operator"
 	sonataFlowOperatorDeploymentName        = sonataFlowOperatorName + "-controller-manager"
 	sonataFlowOperatorPullImageSecretPrefix = sonataFlowOperatorName + "-dockercfg"
 )
 
 // WaitForKogitoOperatorRunning waits for Kogito operator running
 func WaitForKogitoOperatorRunning(namespace string) error {
-	return kogitoFramework.WaitForOnOpenshift(namespace, "Kogito operator running", sonataFlowOperatorTimeoutInMin,
+	return kogitoFramework.WaitForOnOpenshift(namespace, "SonataFlow operator running", sonataFlowOperatorTimeoutInMin,
 		func() (bool, error) {
 			running, err := IsSonataFlowOperatorRunning(namespace)
 			if err != nil {

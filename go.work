@@ -5,4 +5,5 @@ use (
 	./api
 	./container-builder
 	./workflowproj
+	./testbdd
 )

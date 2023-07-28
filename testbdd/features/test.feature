@@ -20,9 +20,14 @@ Feature: Deploy SonataFlow Operator
     Given Namespace is created
     When SonataFlow Operator is deployed
     When SonataFlowPlatform is deployed
+    When SonataFlow orderprocessing example is deployed
+    Then SonataFlow "orderprocessing" has the condition "Running" set to "True" within 1 minutes
+#    Then Wait 1 seconds
+    Then SonataFlow "orderprocessing" is addressable within 1 minute
+#    Then Wait 120 seconds
     #Then SonataFlow Operator has 1 pod running
-    Then Asked to print out the name "<name>"
-    Then Print the name "<name>"
+#    Then Asked to print out the name "<name>"
+#    Then Print the name "<name>"
 
     Examples:
       |name|
@@ -32,8 +37,9 @@ Feature: Deploy SonataFlow Operator
 
   @generation
   Scenario Outline: Test Scenario Outline
-    Given SonataFlow orderprocessing example is deployed
-    Given SonataFlow "aaa" has the condition "Running" set to "True" within (\d+) minutes
+#    Then SonataFlow "orderprocessing" has the condition "Running" set to "True" within 1 minutes
+#    Then Wait 120 seconds
+    Then SonataFlow "orderprocessing" has the condition "Running" set to "True" within 1 minutes
     Examples:
       |name|
       |   Marian    |
