@@ -19,6 +19,7 @@ func registerSonataFlowSteps(ctx *godog.ScenarioContext, data *Data) {
 	ctx.Step(`^SonataFlow orderprocessing example is deployed$`, data.sonataFlowOrderProcessingExampleIsDeployed)
 	ctx.Step(`^SonataFlow "([^"]*)" has the condition "(Running|Succeed|Built)" set to "(True|False|Unknown)" within (\d+) minutes?$`, data.sonataFlowHasTheConditionSetToWithinMinutes)
 	ctx.Step(`^SonataFlow "([^"]*)" is addressable within (\d+) minutes?$`, data.sonataFlowIsAddressableWithinMinutes)
+	ctx.Step(`^HTTP POST request as Cloud Event on SonataFlow "([^"]*)" is successful within (\d+) minutes? with path "([^"]*)", headers "([^"]*)" and body:$`, data.httpPostRequestAsCloudEventOnSonataFlowIsSuccessfulWithinMinutesWithPathHeadersAndBody)
 }
 
 func (data *Data) sonataFlowOrderProcessingExampleIsDeployed() error {
@@ -102,4 +103,44 @@ func getSonataFlow(namespace, name string) (*v1alpha08.SonataFlow, error) {
 		return nil, nil
 	}
 	return sonataFlow, nil
+}
+
+func (data *Data) httpPostRequestAsCloudEventOnSonataFlowIsSuccessfulWithinMinutesWithPathHeadersAndBody(name string, timeoutInMin int, path, headersContent string, body *godog.DocString) error {
+	path = data.ResolveWithScenarioContext(path)
+	bodyContent := data.ResolveWithScenarioContext(body.Content)
+	kogitoFramework.GetLogger(data.Namespace).Debug("httpPostRequestAsCloudEventOnSonataFlowIsSuccessfulWithinMinutesWithPathHeadersAndBody", "sonataflow", name, "path", path, "bodyMediaType", body.MediaType, "bodyContent", bodyContent, "timeout", timeoutInMin)
+	sonataFlow, err := getSonataFlow(data.Namespace, name)
+	if err != nil {
+		return err
+	} else if sonataFlow == nil {
+		return fmt.Errorf("No SonataFlow found with name %s in namespace %s", name, data.Namespace)
+	}
+	sonataFlowUri := sonataFlow.Status.Endpoint
+	uri := strings.TrimSuffix(sonataFlowUri.String(), sonataFlowUri.Path)
+	headers, err := parseHeaders(headersContent)
+	if err != nil {
+		return err
+	}
+
+	requestInfo := kogitoFramework.NewPOSTHTTPRequestInfoWithHeaders(uri, path, headers, body.MediaType, bodyContent)
+	return kogitoFramework.WaitForSuccessfulHTTPRequest(data.Namespace, requestInfo, timeoutInMin)
+}
+
+func parseHeaders(headersContent string) (map[string]string, error) {
+	headers := make(map[string]string)
+
+	for _, headerEntry := range strings.Split(headersContent, ",") {
+		keyValuePair := strings.Split(headerEntry, "=")
+
+		if len(keyValuePair) == 1 {
+			return nil, fmt.Errorf("Header key and value need to be separated by `=`, parsed header: %s", headerEntry)
+		}
+		if len(keyValuePair) > 2 {
+			return nil, fmt.Errorf("Found multiple `=` in parsed header: %s", headerEntry)
+		}
+
+		headers[keyValuePair[0]] = strings.TrimSpace(keyValuePair[1])
+	}
+
+	return headers, nil
 }

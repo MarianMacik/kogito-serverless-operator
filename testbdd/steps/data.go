@@ -36,6 +36,7 @@ func (data *Data) RegisterAllSteps(ctx *godog.ScenarioContext) {
 	registerOperatorSteps(ctx, data)
 	registerPlatformSteps(ctx, data)
 	registerSonataFlowSteps(ctx, data)
+	registerKubernetesSteps(ctx, data)
 
 	//registerKogitoBuildSteps(ctx, data)
 	//registerKogitoDeployFilesSteps(ctx, data)
