@@ -50,29 +50,6 @@ func (data *Data) sonataFlowHasTheConditionSetToWithinMinutes(name, conditionTyp
 		})
 }
 
-//func (data *Data) sonataFlowIsAddressable2(name string) error {
-//	return kogitoFramework.WaitForOnOpenshift(data.Namespace, fmt.Sprintf("SonataFlow %s is addressable", name), 1,
-//		func() (bool, error) {
-//			sonataFlow, err := getSonataFlow(data.Namespace, name)
-//			if err != nil {
-//				return false, err
-//			} else if sonataFlow == nil {
-//				return false, fmt.Errorf("No SonataFlow found with name %s in namespace %s", name, data.Namespace)
-//			}
-//
-//			if sonataFlow.Status.Address.URL == nil {
-//				return false, fmt.Errorf("SonataFlow %s does NOT have an address", name)
-//			}
-//
-//			if _, err := url.ParseRequestURI(sonataFlow.Status.Address.URL.String()); err != nil {
-//				return false, fmt.Errorf("SonataFlow %s address '%s' is not valid: %w", name, sonataFlow.Status.Address.URL, err)
-//			}
-//
-//			return true, nil
-//		})
-//
-//}
-
 func (data *Data) sonataFlowIsAddressableWithinMinutes(name string, timeoutInMin int) error {
 	return kogitoFramework.WaitForOnOpenshift(data.Namespace, fmt.Sprintf("SonataFlow %s is addressable", name), timeoutInMin,
 		func() (bool, error) {

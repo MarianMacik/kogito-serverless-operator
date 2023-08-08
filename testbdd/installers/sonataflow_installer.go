@@ -28,48 +28,48 @@ import (
 )
 
 var (
-	// kogitoYamlClusterInstaller installs Kogito operator cluster wide using YAMLs
+	// sonataFlowYamlClusterInstaller installs SonataFlow operator cluster wide using YAMLs
 	sonataFlowYamlClusterInstaller = installers.YamlClusterWideServiceInstaller{
 		InstallClusterYaml:               installSonataFlowUsingYaml,
 		InstallationNamespace:            SonataFlowNamespace,
-		WaitForClusterYamlServiceRunning: waitForKogitoOperatorUsingYamlRunning,
-		GetAllClusterYamlCrsInNamespace:  getKogitoCrsInNamespace,
-		UninstallClusterYaml:             uninstallKogitoUsingYaml,
+		WaitForClusterYamlServiceRunning: waitForSonataFlowOperatorUsingYamlRunning,
+		GetAllClusterYamlCrsInNamespace:  getSonataFlowCrsInNamespace,
+		UninstallClusterYaml:             uninstallSonataFlowUsingYaml,
 		ClusterYamlServiceName:           sonataFlowServiceName,
-		CleanupClusterYamlCrsInNamespace: cleanupKogitoCrsInNamespace,
+		CleanupClusterYamlCrsInNamespace: cleanupSonataFlowCrsInNamespace,
 	}
 
-	// kogitoCustomOlmClusterWideInstaller installs Kogito cluster wide using OLM with custom catalog
+	// sonataFlowCustomOlmClusterWideInstaller installs SonataFlow cluster wide using OLM with custom catalog
 	sonataFlowCustomOlmClusterWideInstaller = installers.OlmClusterWideServiceInstaller{
-		SubscriptionName:                    kogitoOperatorSubscriptionName,
-		Channel:                             kogitoOperatorSubscriptionChannel,
+		SubscriptionName:                    sonataFlowOperatorSubscriptionName,
+		Channel:                             sonataFlowOperatorSubscriptionChannel,
 		Catalog:                             framework.GetCustomKogitoOperatorCatalog,
 		InstallationTimeoutInMinutes:        5,
-		GetAllClusterWideOlmCrsInNamespace:  getKogitoCrsInNamespace,
-		CleanupClusterWideOlmCrsInNamespace: cleanupKogitoCrsInNamespace,
+		GetAllClusterWideOlmCrsInNamespace:  getSonataFlowCrsInNamespace,
+		CleanupClusterWideOlmCrsInNamespace: cleanupSonataFlowCrsInNamespace,
 	}
 
-	// kogitoOlmClusterWideInstaller installs Kogito cluster wide using OLM with community catalog
+	// sonataFlowOlmClusterWideInstaller installs SonataFlow cluster wide using OLM with community catalog
 	sonataFlowOlmClusterWideInstaller = installers.OlmClusterWideServiceInstaller{
-		SubscriptionName:                    kogitoOperatorSubscriptionName,
-		Channel:                             kogitoOperatorSubscriptionChannel,
+		SubscriptionName:                    sonataFlowOperatorSubscriptionName,
+		Channel:                             sonataFlowOperatorSubscriptionChannel,
 		Catalog:                             framework.GetCommunityCatalog,
 		InstallationTimeoutInMinutes:        5,
-		GetAllClusterWideOlmCrsInNamespace:  getKogitoCrsInNamespace,
-		CleanupClusterWideOlmCrsInNamespace: cleanupKogitoCrsInNamespace,
+		GetAllClusterWideOlmCrsInNamespace:  getSonataFlowCrsInNamespace,
+		CleanupClusterWideOlmCrsInNamespace: cleanupSonataFlowCrsInNamespace,
 	}
 
 	// SonataFlowNamespace is the SonataFlow namespace for yaml cluster-wide deployment
 	SonataFlowNamespace   = "sonataflow-operator-system"
 	sonataFlowServiceName = "SonataFlow operator"
 
-	kogitoOperatorSubscriptionName    = "sonataflow-operator"
-	kogitoOperatorSubscriptionChannel = "alpha"
+	sonataFlowOperatorSubscriptionName    = "sonataflow-operator"
+	sonataFlowOperatorSubscriptionChannel = "alpha"
 )
 
-// GetSonataFlowInstaller returns Kogito installer
+// GetSonataFlowInstaller returns SonataFlow installer
 func GetSonataFlowInstaller() (installers.ServiceInstaller, error) {
-	// If user doesn't pass Kogito operator image then use community OLM catalog to install operator
+	// If user doesn't pass SonataFlow operator image then use community OLM catalog to install operator
 	if len(config.GetOperatorImageTag()) == 0 {
 		framework.GetMainLogger().Info("Installing SonataFlow operator using community catalog.")
 		return &sonataFlowOlmClusterWideInstaller, nil
@@ -87,7 +87,7 @@ func GetSonataFlowInstaller() (installers.ServiceInstaller, error) {
 }
 
 func installSonataFlowUsingYaml() error {
-	framework.GetMainLogger().Info("Installing Kogito operator")
+	framework.GetMainLogger().Info("Installing SonataFlow operator")
 
 	yamlContent, err := framework.ReadFromURI(config.GetOperatorYamlURI())
 	if err != nil {
@@ -101,7 +101,7 @@ func installSonataFlowUsingYaml() error {
 	}
 	yamlContent = regexp.ReplaceAllString(yamlContent, config.GetOperatorImageTag())
 
-	tempFilePath, err := framework.CreateTemporaryFile("kogito-operator*.yaml", yamlContent)
+	tempFilePath, err := framework.CreateTemporaryFile("kogito-serverless-operator*.yaml", yamlContent)
 	if err != nil {
 		framework.GetMainLogger().Error(err, "Error while storing adjusted YAML content to temporary file")
 		return err
@@ -109,30 +109,30 @@ func installSonataFlowUsingYaml() error {
 
 	_, err = framework.CreateCommand("oc", "apply", "-f", tempFilePath).Execute()
 	if err != nil {
-		framework.GetMainLogger().Error(err, "Error while installing Kogito operator from YAML file")
+		framework.GetMainLogger().Error(err, "Error while installing SonataFlow operator from YAML file")
 		return err
 	}
 
 	return nil
 }
 
-func waitForKogitoOperatorUsingYamlRunning() error {
-	return srvframework.WaitForKogitoOperatorRunning(SonataFlowNamespace)
+func waitForSonataFlowOperatorUsingYamlRunning() error {
+	return srvframework.WaitForSonataFlowOperatorRunning(SonataFlowNamespace)
 }
 
-func uninstallKogitoUsingYaml() error {
-	framework.GetMainLogger().Info("Uninstalling Kogito operator")
+func uninstallSonataFlowUsingYaml() error {
+	framework.GetMainLogger().Info("Uninstalling SonataFlow operator")
 
 	output, err := framework.CreateCommand("oc", "delete", "-f", config.GetOperatorYamlURI(), "--timeout=30s", "--ignore-not-found=true").Execute()
 	if err != nil {
-		framework.GetMainLogger().Error(err, fmt.Sprintf("Deleting Kogito operator failed, output: %s", output))
+		framework.GetMainLogger().Error(err, fmt.Sprintf("Deleting SonataFlow operator failed, output: %s", output))
 		return err
 	}
 
 	return nil
 }
 
-func getKogitoCrsInNamespace(namespace string) ([]client.Object, error) {
+func getSonataFlowCrsInNamespace(namespace string) ([]client.Object, error) {
 	var crs []client.Object
 
 	//kogitoRuntimes := &v1beta1.KogitoRuntimeList{}
@@ -170,16 +170,16 @@ func getKogitoCrsInNamespace(namespace string) ([]client.Object, error) {
 	return crs, nil
 }
 
-func cleanupKogitoCrsInNamespace(namespace string) bool {
-	crs, err := getKogitoCrsInNamespace(namespace)
+func cleanupSonataFlowCrsInNamespace(namespace string) bool {
+	crs, err := getSonataFlowCrsInNamespace(namespace)
 	if err != nil {
-		framework.GetLogger(namespace).Error(err, "Error getting Kogito CRs.")
+		framework.GetLogger(namespace).Error(err, "Error getting SonataFlow CRs.")
 		return false
 	}
 
 	for _, cr := range crs {
 		if err := framework.DeleteObject(cr); err != nil {
-			framework.GetLogger(namespace).Error(err, "Error deleting Kogito CR.", "CR name", cr.GetName())
+			framework.GetLogger(namespace).Error(err, "Error deleting SonataFlow CR.", "CR name", cr.GetName())
 			return false
 		}
 	}

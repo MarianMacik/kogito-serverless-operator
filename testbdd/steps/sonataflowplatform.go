@@ -26,17 +26,16 @@ func (data *Data) sonataFlowPlatformIsDeployed() error {
 	projectDir = strings.Replace(projectDir, "/testbdd", "", -1)
 
 	// TODO or kubectl
-	out, err := kogitoFramework.CreateCommand("oc", "apply", "-f", filepath.Join(projectDir, getKogitoServerlessPlatformFilename()), "-n", data.Namespace).Execute()
+	out, err := kogitoFramework.CreateCommand("oc", "apply", "-f", filepath.Join(projectDir, getSonataFlowPlatformFilename()), "-n", data.Namespace).Execute()
 
 	if err != nil {
 		kogitoFramework.GetLogger(data.Namespace).Error(err, fmt.Sprintf("Applying SonataFlowPlatform failed, output: %s", out))
 	}
 
-	//_ = <-time.After(120 * time.Second)
 	return err
 }
 
-func getKogitoServerlessPlatformFilename() string {
+func getSonataFlowPlatformFilename() string {
 	if getClusterPlatform() == openshiftPlatform {
 		return test.GetPlatformOpenshiftE2eTest()
 	}

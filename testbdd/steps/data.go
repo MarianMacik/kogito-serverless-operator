@@ -15,46 +15,27 @@
 package steps
 
 import (
-	"fmt"
 	"github.com/cucumber/godog"
 	"github.com/kiegroup/kogito-operator/test/pkg/framework"
-	"github.com/kiegroup/kogito-operator/test/pkg/steps"
+	kogitoSteps "github.com/kiegroup/kogito-operator/test/pkg/steps"
 	"strconv"
 	"time"
 )
 
 // Data contains all data needed by Gherkin steps to run
 type Data struct {
-	*steps.Data
+	*kogitoSteps.Data
 }
 
 // RegisterAllSteps register all steps available to the test suite
 func (data *Data) RegisterAllSteps(ctx *godog.ScenarioContext) {
-	ctx.Step(`^Asked to print out the name "([^"]*)"$`, data.askedToPrintOutTheName)
-	ctx.Step(`^Print the name "([^"]*)"$`, data.printTheName)
-	ctx.Step(`^Wait (\d+) seconds?$`, data.waitSeconds)
 	registerOperatorSteps(ctx, data)
 	registerPlatformSteps(ctx, data)
 	registerSonataFlowSteps(ctx, data)
 	registerKubernetesSteps(ctx, data)
 
-	//registerKogitoBuildSteps(ctx, data)
-	//registerKogitoDeployFilesSteps(ctx, data)
-	//registerKafkaSteps(ctx, data)
-	//registerKogitoInfraSteps(ctx, data)
-	//registerKogitoRuntimeSteps(ctx, data)
-	//registerOpenShiftSteps(ctx, data)
-	//registerOperatorSteps(ctx, data)
-}
-
-func (data *Data) askedToPrintOutTheName(arg1 string) error {
-	fmt.Printf("Hello Print Out The Name %s", arg1)
-	return nil
-}
-
-func (data *Data) printTheName(arg1 string) error {
-	fmt.Printf("Hello The Name %s", arg1)
-	return nil
+	// Used for debugging
+	ctx.Step(`^Wait (\d+) seconds?$`, data.waitSeconds)
 }
 
 func (data *Data) waitSeconds(seconds int) error {

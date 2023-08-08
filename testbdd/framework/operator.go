@@ -16,8 +16,8 @@ const (
 	sonataFlowOperatorPullImageSecretPrefix = sonataFlowOperatorName + "-dockercfg"
 )
 
-// WaitForKogitoOperatorRunning waits for Kogito operator running
-func WaitForKogitoOperatorRunning(namespace string) error {
+// WaitForSonataFlowOperatorRunning waits for Kogito operator running
+func WaitForSonataFlowOperatorRunning(namespace string) error {
 	return kogitoFramework.WaitForOnOpenshift(namespace, "SonataFlow operator running", sonataFlowOperatorTimeoutInMin,
 		func() (bool, error) {
 			running, err := IsSonataFlowOperatorRunning(namespace)

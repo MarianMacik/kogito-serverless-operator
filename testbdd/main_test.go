@@ -17,12 +17,9 @@ package main
 import (
 	"testing"
 
-	"github.com/cucumber/godog"
-	kogitoExecutor "github.com/kiegroup/kogito-operator/test/pkg/executor"
 	kogitoFramework "github.com/kiegroup/kogito-operator/test/pkg/framework"
-	kogitoSteps "github.com/kiegroup/kogito-operator/test/pkg/steps"
+	"github.com/kiegroup/kogito-serverless-operator/testbdd/executor"
 	"github.com/kiegroup/kogito-serverless-operator/testbdd/meta"
-	"github.com/kiegroup/kogito-serverless-operator/testbdd/steps"
 )
 
 func TestMain(m *testing.M) {
@@ -31,12 +28,5 @@ func TestMain(m *testing.M) {
 		panic(err)
 	}
 
-	kogitoExecutor.PreRegisterStepsHook = func(ctx *godog.ScenarioContext, d *kogitoSteps.Data) {
-		data := &steps.Data{Data: d}
-		data.RegisterAllSteps(ctx)
-		//data.RegisterLogsKubernetesObjects(&imgv1.ImageStreamList{}, &v1.KogitoRuntimeList{}, &v1.KogitoBuildList{}, &olmapiv1alpha1.ClusterServiceVersionList{})
-	}
-	//kogitoExecutor.DisableLogsKogitoCommunityObjects()
-
-	kogitoExecutor.ExecuteBDDTests(nil)
+	executor.ExecuteBDDTests(nil)
 }
