@@ -16,7 +16,6 @@ package framework
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"strings"
 
@@ -89,7 +88,7 @@ func OperateOnNamespaceIfExists(namespace string, operate func(namespace string)
 
 // GetNamespacesInHistory retrieves all the namespaces in the history.
 func GetNamespacesInHistory() []string {
-	input, err := ioutil.ReadFile(namespaceLogFile)
+	input, err := os.ReadFile(namespaceLogFile)
 	if err != nil {
 		// file does not exist
 		return []string{}
@@ -131,5 +130,5 @@ func removeNamespaceFromHistory(namespace string) error {
 	}
 
 	output := strings.Join(newNamespaces, "\n")
-	return ioutil.WriteFile(namespaceLogFile, []byte(output), permissionMode)
+	return os.WriteFile(namespaceLogFile, []byte(output), permissionMode)
 }
